@@ -104,9 +104,9 @@ Additionally, live NAV data is fetched using the mfapi.in API.
 
 Day 1 Completed
 
-Day 2 – Data Cleaning & Database Creation
+Day 2 – Data Cleaning & Database Creation [ COMPLETED]
 
-Day 3 – Exploratory Data Analysis
+Day 3 – Exploratory Data Analysis [COMPLETED] " Refer chart images of day 3 pngs"
 
 Day 4 – Performance Analytics
 
