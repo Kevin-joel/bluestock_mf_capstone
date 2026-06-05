@@ -1,0 +1,19 @@
+import pandas as pd
+
+bench = pd.read_csv(
+    "data/processed/10_benchmark_indices_clean.csv"
+)
+
+print(bench["index_name"].value_counts())
+
+print("\nUnique NIFTY100 Dates:")
+print(
+    bench[bench["index_name"]=="NIFTY100"]["date"].nunique()
+)
+
+print("\nDate Range:")
+print(
+    bench[bench["index_name"]=="NIFTY100"]["date"].min(),
+    "->",
+    bench[bench["index_name"]=="NIFTY100"]["date"].max()
+)
