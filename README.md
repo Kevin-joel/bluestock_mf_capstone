@@ -551,15 +551,9 @@ Actual historical 5-Year CAGR could not be computed due to insufficient historic
 
 Day 1 Completed
 
-<<<<<<< HEAD
 Day 2 – Data Cleaning & Database Creation [ COMPLETED]
 
 Day 3 – Exploratory Data Analysis [COMPLETED] " Refer chart images of day 3 pngs"
-=======
-Day 2 – Data Cleaning & Database Creation [COMPLETED]
-
-Day 3 – Exploratory Data Analysis [COMPLETED]
->>>>>>> 76c9f7f (Update README with Day 4 performance analytics)
 
 Day 4 – Performance Analytics [COMPLETED]
 
