@@ -563,8 +563,6 @@ Day 6 – Advanced Analytics
 
 Day 7 – Final Report & Presentation
 
----
-
 ## Author
 
 Kevin Joel Velevela
