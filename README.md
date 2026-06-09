@@ -547,6 +547,259 @@ Actual historical 5-Year CAGR could not be computed due to insufficient historic
 
 ---
 
+## Day 5 – Dashboard Development (Power BI)
+
+### Objective
+
+Develop an interactive business intelligence dashboard to analyze mutual fund industry trends, fund performance, investor behavior, and SIP market insights using Power BI.
+
+### Data Sources
+
+The dashboard was built using the cleaned datasets generated during previous project phases:
+
+* Fund Master Data
+* NAV History
+* AUM by Fund House
+* Monthly SIP Inflows
+* Category Inflows
+* Industry Folio Counts
+* Scheme Performance Metrics
+* Investor Transactions
+* Portfolio Holdings
+* Benchmark Indices
+
+### Dashboard Pages
+
+#### 1. Industry Overview
+
+* KPI Cards for Total AUM, SIP Inflows, Folios, and Schemes
+* Industry AUM Trend Analysis
+* AUM Distribution by Fund House
+* Interactive Year Filtering
+
+#### 2. Fund Performance
+
+* Risk vs Return Scatter Plot
+* Fund Performance Scorecard
+* NAV Trend Analysis
+* Fund House, Category, and Plan Filters
+
+#### 3. Investor Analytics
+
+* State-wise Transaction Analysis
+* Transaction Type Distribution (SIP, Lumpsum, Redemption)
+* Average Investment by Age Group
+* Monthly Transaction Volume Trends
+* Demographic and Geographic Filters
+
+#### 4. SIP & Market Trends
+
+* SIP Inflow Trend Analysis
+* Category Inflow Heatmap
+* Top Categories by Net Inflow
+* Market Trend Monitoring Dashboard
+
+### Key Features
+
+* Interactive filtering and cross-visual analysis
+* Dynamic KPI monitoring
+* Demographic and geographic investor insights
+* Mutual fund performance benchmarking
+* SIP and market trend visualization
+
+### Deliverables
+
+* `bluestock_mf_dashboard.pbix`
+* `bluestock_mf_dashboard.pdf`
+* Industry Overview Screenshot
+* Fund Performance Screenshot
+* Investor Analytics Screenshot
+* SIP & Market Trends Screenshot
+
+### Technologies Used
+
+* Power BI Desktop
+* DAX Measures
+* Data Modeling
+* Interactive Visualizations
+* Business Intelligence Reporting
+
+### Outcome
+
+Successfully developed a multi-page Power BI dashboard providing comprehensive insights into mutual fund industry performance, investor behavior, SIP trends, and fund analytics for business decision-making and reporting.
+
+
+# Day 6 — Advanced Analytics & Risk Metrics
+
+## Objective
+
+The goal of Day 6 was to move beyond descriptive analytics and implement advanced risk analysis, investor behavior analytics, portfolio concentration measurement, and a recommendation system for mutual funds.
+
+---
+
+## Tasks Completed
+
+### 1. Historical VaR & CVaR Analysis
+
+Calculated historical Value at Risk (VaR 95%) and Conditional Value at Risk (CVaR 95%) using daily NAV return distributions for all 40 mutual fund schemes.
+
+**Metrics Computed**
+
+* VaR (95%) = 5th percentile of daily returns
+* CVaR (95%) = Average return below the VaR threshold
+
+**Output**
+
+* `reports/day 6/var_cvar_report.csv`
+
+**Key Finding**
+Small-cap funds such as SBI Small Cap Fund, Axis Small Cap Fund, and ABSL Small Cap Fund exhibited the highest downside risk with the most negative VaR and CVaR values.
+
+---
+
+### 2. Rolling 90-Day Sharpe Ratio
+
+Calculated rolling risk-adjusted performance using a 90-day rolling window of daily returns.
+
+**Formula**
+
+Rolling Sharpe Ratio =
+
+(Rolling Mean Return / Rolling Standard Deviation) × √252
+
+**Analysis**
+
+* Selected top 5 funds based on AUM.
+* Visualized risk-adjusted performance over time.
+
+**Output**
+
+* `reports/day 6/rolling_sharpe_chart.png`
+
+---
+
+### 3. Investor Cohort Analysis
+
+Segmented investors based on the year of their first transaction and analyzed investment behavior across cohorts.
+
+**Metrics**
+
+* Average Investment Amount
+* Total Invested Amount
+* Number of Investors
+* Most Preferred Fund
+
+**Output**
+
+* `reports/day 6/investor_cohort_analysis.csv`
+
+**Key Finding**
+The 2024 investor cohort accounted for the majority of total investments and showed a strong preference for Mirae Asset Emerging Bluechip Fund.
+
+---
+
+### 4. SIP Continuity Analysis
+
+Evaluated consistency of SIP investments by analyzing transaction gaps for investors with at least six SIP transactions.
+
+**Logic**
+
+* Computed average gap between SIP transactions.
+* Investors with an average gap greater than 35 days were flagged as "At-Risk".
+
+**Output**
+
+* `reports/day 6/sip_continuity_report.csv`
+
+**Key Finding**
+Only 2.20% of eligible investors maintained healthy SIP continuity, indicating significant discontinuity risk among SIP investors.
+
+---
+
+### 5. Sector Concentration Analysis (HHI)
+
+Measured portfolio concentration using the Herfindahl-Hirschman Index (HHI).
+
+**Formula**
+
+HHI = Σ(weight²)
+
+Higher HHI values indicate greater portfolio concentration.
+
+**Output**
+
+* `reports/day 6/sector_hhi_report.csv`
+
+**Key Finding**
+Axis Bluechip Fund exhibited the highest portfolio concentration among analyzed funds.
+
+---
+
+### 6. Mutual Fund Recommendation System
+
+Built a rule-based recommendation engine that suggests mutual funds according to investor risk appetite.
+
+**Inputs**
+
+* Low Risk
+* Moderate Risk
+* High Risk
+
+**Ranking Criteria**
+
+* Sharpe Ratio
+* Historical Performance
+* Risk Grade
+
+**Output**
+
+* `src/recommender.py`
+
+**Sample Recommendation (High Risk)**
+
+1. Kotak Emerging Equity Fund
+2. ICICI Prudential Midcap Fund
+3. DSP Midcap Fund
+
+---
+
+## Deliverables
+
+* Advanced_Analytics.ipynb
+* var_cvar_report.csv
+* rolling_sharpe_chart.png
+* investor_cohort_analysis.csv
+* sip_continuity_report.csv
+* sector_hhi_report.csv
+* recommender.py
+
+---
+
+## Key Business Insights
+
+1. Small-cap mutual funds demonstrated the highest downside risk based on VaR and CVaR analysis.
+2. Investor participation was heavily concentrated in the 2024 cohort, which contributed the largest investment volume.
+3. SIP continuity analysis revealed that most investors exhibit irregular contribution behavior.
+4. Portfolio concentration analysis identified Axis Bluechip Fund as the most concentrated equity portfolio.
+5. High-risk mid-cap and emerging equity funds delivered the strongest risk-adjusted returns according to Sharpe ratio rankings.
+
+---
+
+## Skills Demonstrated
+
+* Financial Risk Analytics
+* VaR & CVaR Modeling
+* Sharpe Ratio Analysis
+* Time-Series Analysis
+* Investor Segmentation
+* Cohort Analysis
+* SIP Behavior Analytics
+* Portfolio Concentration Measurement (HHI)
+* Recommendation Systems
+* Python (Pandas, NumPy, Matplotlib)
+* Business Insight Generation
+
+
 ## Current Status
 
 Day 1 Completed
@@ -557,9 +810,9 @@ Day 3 – Exploratory Data Analysis [COMPLETED] " Refer chart images of day 3 pn
 
 Day 4 – Performance Analytics [COMPLETED]
 
-Day 5 – Dashboard Development
+Day 5 – Dashboard Development [ COMPLETED ]
 
-Day 6 – Advanced Analytics
+Day 6 – Advanced Analytics [ COMPLETED ]
 
 Day 7 – Final Report & Presentation
 
