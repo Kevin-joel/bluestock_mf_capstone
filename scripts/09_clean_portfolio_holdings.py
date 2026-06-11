@@ -1,25 +1,59 @@
+"""
+Portfolio Holdings Data Cleaning Module
+
+Purpose:
+Validates portfolio holdings data by checking holding weights,
+market values, and security prices before exporting a cleaned dataset.
+
+Author: Kevin Joel
+Project: Bluestock Mutual Fund Analytics Capstone
+"""
+
 import pandas as pd
 
-df = pd.read_csv(
-    "data/raw/09_portfolio_holdings.csv"
-)
+INPUT_FILE = "data/raw/09_portfolio_holdings.csv"
+OUTPUT_FILE = "data/processed/09_portfolio_holdings_clean.csv"
 
-df["portfolio_date"] = pd.to_datetime(
-    df["portfolio_date"]
-)
 
-df = df[
-    (df["weight_pct"] >= 0)
-    &
-    (df["weight_pct"] <= 100)
-]
+def clean_portfolio_holdings():
+    """
+    Clean and validate portfolio holdings data.
+    """
 
-df = df[df["market_value_cr"] > 0]
-df = df[df["current_price_inr"] > 0]
+    df = pd.read_csv(INPUT_FILE)
 
-df.to_csv(
-    "data/processed/09_portfolio_holdings_clean.csv",
-    index=False
-)
+    initial_records = len(df)
 
-print("portfolio cleaned")
+    df["portfolio_date"] = pd.to_datetime(
+        df["portfolio_date"],
+        errors="coerce"
+    )
+
+    df = df[
+        (df["weight_pct"] >= 0)
+        &
+        (df["weight_pct"] <= 100)
+    ]
+
+    df = df[df["market_value_cr"] > 0]
+    df = df[df["current_price_inr"] > 0]
+
+    final_records = len(df)
+
+    df.to_csv(
+        OUTPUT_FILE,
+        index=False
+    )
+
+    print("Portfolio holdings data cleaned successfully.")
+    print(f"Records processed : {initial_records}")
+    print(f"Records retained  : {final_records}")
+
+
+def main():
+    """Execute portfolio holdings cleaning."""
+    clean_portfolio_holdings()
+
+
+if __name__ == "__main__":
+    main()

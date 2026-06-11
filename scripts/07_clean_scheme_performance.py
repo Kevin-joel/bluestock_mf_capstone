@@ -1,10 +1,21 @@
+"""
+Scheme Performance Data Cleaning Module
+
+Purpose:
+Validates scheme performance metrics, converts numerical fields,
+identifies expense ratio anomalies, and exports cleaned datasets.
+
+Author: Kevin Joel
+Project: Bluestock Mutual Fund Analytics Capstone
+"""
+
 import pandas as pd
 
-df = pd.read_csv(
-    "data/raw/07_scheme_performance.csv"
-)
+INPUT_FILE = "data/raw/07_scheme_performance.csv"
+OUTPUT_FILE = "data/processed/07_scheme_performance_clean.csv"
+ANOMALY_FILE = "data/processed/expense_ratio_anomalies.csv"
 
-numeric_cols = [
+NUMERIC_COLUMNS = [
     "return_1yr_pct",
     "return_3yr_pct",
     "return_5yr_pct",
@@ -19,26 +30,45 @@ numeric_cols = [
     "expense_ratio_pct"
 ]
 
-for col in numeric_cols:
-    df[col] = pd.to_numeric(
-        df[col],
-        errors="coerce"
+
+def clean_scheme_performance():
+    """
+    Clean and validate scheme performance data.
+    """
+
+    df = pd.read_csv(INPUT_FILE)
+
+    for column in NUMERIC_COLUMNS:
+        df[column] = pd.to_numeric(
+            df[column],
+            errors="coerce"
+        )
+
+    anomalies = df[
+        (df["expense_ratio_pct"] < 0.1)
+        |
+        (df["expense_ratio_pct"] > 2.5)
+    ]
+
+    anomalies.to_csv(
+        ANOMALY_FILE,
+        index=False
     )
 
-anomalies = df[
-    (df["expense_ratio_pct"] < 0.1)
-    |
-    (df["expense_ratio_pct"] > 2.5)
-]
+    df.to_csv(
+        OUTPUT_FILE,
+        index=False
+    )
 
-anomalies.to_csv(
-    "data/processed/expense_ratio_anomalies.csv",
-    index=False
-)
+    print("Scheme performance data cleaned successfully.")
+    print(f"Records processed : {len(df)}")
+    print(f"Expense anomalies : {len(anomalies)}")
 
-df.to_csv(
-    "data/processed/07_scheme_performance_clean.csv",
-    index=False
-)
 
-print("scheme performance cleaned")
+def main():
+    """Execute scheme performance cleaning."""
+    clean_scheme_performance()
+
+
+if __name__ == "__main__":
+    main()

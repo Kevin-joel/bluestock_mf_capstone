@@ -1,5 +1,16 @@
+"""
+Alpha-Beta Analysis Module
+
+Purpose:
+Measures fund performance relative to the benchmark by
+calculating Alpha, Beta, and R-Squared using linear regression
+against NIFTY100 benchmark returns.
+
+Author: Kevin Joel
+Project: Bluestock Mutual Fund Analytics Capstone
+"""
+
 import pandas as pd
-import numpy as np
 from pathlib import Path
 from scipy.stats import linregress
 
@@ -32,13 +43,15 @@ bench_df["date"] = pd.to_datetime(
 )
 
 # --------------------------------------------------
-# NIFTY100 Only
+# Benchmark Preparation (NIFTY100)
 # --------------------------------------------------
 nifty100 = bench_df[
     bench_df["index_name"] == "NIFTY100"
 ].copy()
 
-nifty100 = nifty100.sort_values("date")
+nifty100 = nifty100.sort_values(
+    "date"
+)
 
 nifty100["benchmark_return"] = (
     nifty100["close_value"]
@@ -50,7 +63,7 @@ benchmark_returns = nifty100[
 ]
 
 # --------------------------------------------------
-# Alpha Beta Calculation
+# Alpha-Beta Calculation
 # --------------------------------------------------
 results = []
 
@@ -75,7 +88,10 @@ for amfi_code, group in returns_df.groupby("amfi_code"):
     x = merged["benchmark_return"]
     y = merged["daily_return"]
 
-    regression = linregress(x, y)
+    regression = linregress(
+        x,
+        y
+    )
 
     beta = regression.slope
 
@@ -93,7 +109,7 @@ for amfi_code, group in returns_df.groupby("amfi_code"):
     ])
 
 # --------------------------------------------------
-# DataFrame
+# Create DataFrame
 # --------------------------------------------------
 alpha_beta_df = pd.DataFrame(
     results,
@@ -106,7 +122,7 @@ alpha_beta_df = pd.DataFrame(
 )
 
 # --------------------------------------------------
-# Merge Fund Names
+# Merge Fund Information
 # --------------------------------------------------
 alpha_beta_df = alpha_beta_df.merge(
     fund_df[
@@ -135,24 +151,16 @@ alpha_beta_df = alpha_beta_df.sort_values(
 )
 
 # --------------------------------------------------
-# Save
+# Save Results
 # --------------------------------------------------
 alpha_beta_df.to_csv(
     OUTPUT_FILE,
     index=False
 )
 
-print("\nTop 10 Funds by Alpha\n")
-
-print(
-    alpha_beta_df[
-        [
-            "scheme_name",
-            "alpha_pct",
-            "beta",
-            "r_squared"
-        ]
-    ].head(10)
-)
-
-print(f"\nSaved: {OUTPUT_FILE}")
+# --------------------------------------------------
+# Summary
+# --------------------------------------------------
+print("Alpha-Beta analysis completed successfully.")
+print(f"Funds analyzed : {len(alpha_beta_df)}")
+print(f"Output file    : {OUTPUT_FILE}")

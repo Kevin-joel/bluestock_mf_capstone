@@ -1,3 +1,14 @@
+"""
+Risk-Adjusted Performance Analysis Module
+
+Purpose:
+Calculates annualized returns, volatility, Sharpe Ratio,
+and Sortino Ratio for mutual fund schemes using daily returns.
+
+Author: Kevin Joel
+Project: Bluestock Mutual Fund Analytics Capstone
+"""
+
 import pandas as pd
 import numpy as np
 from pathlib import Path
@@ -13,7 +24,7 @@ FUND_FILE = BASE_DIR / "data" / "processed" / "01_fund_master_clean.csv"
 OUTPUT_FILE = BASE_DIR / "data" / "processed" / "sharpe_sortino.csv"
 
 # --------------------------------------------------
-# Config
+# Configuration
 # --------------------------------------------------
 RISK_FREE_RATE = 0.065
 TRADING_DAYS = 252
@@ -22,7 +33,6 @@ TRADING_DAYS = 252
 # Load Data
 # --------------------------------------------------
 returns_df = pd.read_csv(RETURNS_FILE)
-
 fund_df = pd.read_csv(FUND_FILE)
 
 returns_df["date"] = pd.to_datetime(
@@ -41,21 +51,21 @@ for amfi_code, group in returns_df.groupby("amfi_code"):
     if len(returns) < 100:
         continue
 
-    # Annual Return
+    # Annualized Return
     annual_return = returns.mean() * TRADING_DAYS
 
-    # Annual Volatility
+    # Annualized Volatility
     volatility = (
         returns.std() * np.sqrt(TRADING_DAYS)
     )
 
-    # Sharpe
+    # Sharpe Ratio
     sharpe = (
         (annual_return - RISK_FREE_RATE)
         / volatility
     )
 
-    # Downside Returns
+    # Sortino Ratio
     downside = returns[returns < 0]
 
     if len(downside) > 0:
@@ -82,7 +92,7 @@ for amfi_code, group in returns_df.groupby("amfi_code"):
     ])
 
 # --------------------------------------------------
-# DataFrame
+# Create DataFrame
 # --------------------------------------------------
 metrics_df = pd.DataFrame(
     results,
@@ -96,7 +106,7 @@ metrics_df = pd.DataFrame(
 )
 
 # --------------------------------------------------
-# Merge Names
+# Merge Fund Information
 # --------------------------------------------------
 metrics_df = metrics_df.merge(
     fund_df[
@@ -115,16 +125,12 @@ metrics_df = metrics_df.merge(
 # --------------------------------------------------
 metrics_df["sharpe_rank"] = (
     metrics_df["sharpe_ratio"]
-    .rank(
-        ascending=False
-    )
+    .rank(ascending=False)
 )
 
 metrics_df["sortino_rank"] = (
     metrics_df["sortino_ratio"]
-    .rank(
-        ascending=False
-    )
+    .rank(ascending=False)
 )
 
 metrics_df = metrics_df.sort_values(
@@ -132,25 +138,16 @@ metrics_df = metrics_df.sort_values(
 )
 
 # --------------------------------------------------
-# Save
+# Save Results
 # --------------------------------------------------
 metrics_df.to_csv(
     OUTPUT_FILE,
     index=False
 )
 
-print("\nTop 10 Funds by Sharpe Ratio\n")
-
-print(
-    metrics_df[
-        [
-            "scheme_name",
-            "annual_return_pct",
-            "annual_volatility_pct",
-            "sharpe_ratio",
-            "sortino_ratio"
-        ]
-    ].head(10)
-)
-
-print(f"\nSaved: {OUTPUT_FILE}")
+# --------------------------------------------------
+# Summary
+# --------------------------------------------------
+print("Sharpe-Sortino analysis completed successfully.")
+print(f"Funds analyzed : {len(metrics_df)}")
+print(f"Output file    : {OUTPUT_FILE}")

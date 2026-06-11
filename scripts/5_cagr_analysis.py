@@ -1,10 +1,18 @@
+"""
+CAGR Analysis Module
+
+Purpose:
+Calculates 1-year, 3-year, and 5-year Compound Annual Growth Rates
+for mutual fund schemes using historical NAV data.
+
+Author: Kevin Joel
+Project: Bluestock Mutual Fund Analytics Capstone
+"""
+
 import pandas as pd
 import numpy as np
 from pathlib import Path
 
-# --------------------------------------------------
-# Paths
-# --------------------------------------------------
 BASE_DIR = Path(__file__).resolve().parents[1]
 
 NAV_FILE = BASE_DIR / "data" / "processed" / "02_nav_history_clean.csv"
@@ -12,19 +20,23 @@ FUND_FILE = BASE_DIR / "data" / "processed" / "01_fund_master_clean.csv"
 
 OUTPUT_FILE = BASE_DIR / "data" / "processed" / "cagr_summary.csv"
 
-# --------------------------------------------------
-# Load Data
-# --------------------------------------------------
-nav_df = pd.read_csv(NAV_FILE)
 
-fund_df = pd.read_csv(FUND_FILE)
-
-nav_df["date"] = pd.to_datetime(nav_df["date"])
-
-# --------------------------------------------------
-# CAGR Function
-# --------------------------------------------------
 def calculate_cagr(nav_data, years):
+    """
+    Calculate CAGR for a specified period.
+
+    Parameters
+    ----------
+    nav_data : pd.DataFrame
+        NAV history for a mutual fund.
+    years : int
+        Number of years.
+
+    Returns
+    -------
+    float
+        CAGR value.
+    """
 
     end_date = nav_data["date"].max()
     start_date = end_date - pd.DateOffset(years=years)
@@ -45,9 +57,11 @@ def calculate_cagr(nav_data, years):
     return ((end_nav / start_nav) ** (1 / years)) - 1
 
 
-# --------------------------------------------------
-# Calculate CAGR
-# --------------------------------------------------
+nav_df = pd.read_csv(NAV_FILE)
+fund_df = pd.read_csv(FUND_FILE)
+
+nav_df["date"] = pd.to_datetime(nav_df["date"])
+
 results = []
 
 for amfi_code, group in nav_df.groupby("amfi_code"):
@@ -57,7 +71,6 @@ for amfi_code, group in nav_df.groupby("amfi_code"):
     cagr_1yr = calculate_cagr(group, 1)
     cagr_3yr = calculate_cagr(group, 3)
 
-    # Check if 5 years available
     years_available = (
         (group["date"].max() - group["date"].min()).days
         / 365.25
@@ -75,9 +88,6 @@ for amfi_code, group in nav_df.groupby("amfi_code"):
         cagr_5yr
     ])
 
-# --------------------------------------------------
-# Create Table
-# --------------------------------------------------
 cagr_df = pd.DataFrame(
     results,
     columns=[
@@ -96,13 +106,9 @@ cagr_df = cagr_df.merge(
     how="left"
 )
 
-# Convert to %
 for col in ["cagr_1yr", "cagr_3yr", "cagr_5yr"]:
     cagr_df[col] = cagr_df[col] * 100
 
-# --------------------------------------------------
-# Ranking
-# --------------------------------------------------
 cagr_df["rank_3yr"] = (
     cagr_df["cagr_3yr"]
     .rank(ascending=False)
@@ -112,24 +118,11 @@ cagr_df = cagr_df.sort_values(
     "rank_3yr"
 )
 
-# --------------------------------------------------
-# Save
-# --------------------------------------------------
 cagr_df.to_csv(
     OUTPUT_FILE,
     index=False
 )
 
-print("\nTop 10 Funds by 3Y CAGR\n")
-
-print(
-    cagr_df[
-        [
-            "scheme_name",
-            "cagr_3yr",
-            "rank_3yr"
-        ]
-    ].head(10)
-)
-
-print(f"\nSaved: {OUTPUT_FILE}")
+print("CAGR analysis completed successfully.")
+print(f"Funds analyzed : {len(cagr_df)}")
+print(f"Output file    : {OUTPUT_FILE}")

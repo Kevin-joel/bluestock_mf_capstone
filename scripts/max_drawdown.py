@@ -1,5 +1,16 @@
+"""
+Maximum Drawdown Analysis Module
+
+Purpose:
+Calculates the maximum drawdown experienced by each mutual fund,
+identifies the worst drawdown period, and ranks funds based on
+downside risk.
+
+Author: Kevin Joel
+Project: Bluestock Mutual Fund Analytics Capstone
+"""
+
 import pandas as pd
-import numpy as np
 from pathlib import Path
 
 # --------------------------------------------------
@@ -15,15 +26,12 @@ OUTPUT_FILE = BASE_DIR / "data" / "processed" / "max_drawdown.csv"
 # --------------------------------------------------
 # Load Data
 # --------------------------------------------------
-print("Loading datasets...")
-
 nav_df = pd.read_csv(NAV_FILE)
 fund_df = pd.read_csv(FUND_FILE)
 
-nav_df["date"] = pd.to_datetime(nav_df["date"])
-
-print(f"NAV Records: {len(nav_df):,}")
-print(f"Funds: {nav_df['amfi_code'].nunique()}")
+nav_df["date"] = pd.to_datetime(
+    nav_df["date"]
+)
 
 # --------------------------------------------------
 # Maximum Drawdown Calculation
@@ -32,20 +40,29 @@ results = []
 
 for amfi_code, group in nav_df.groupby("amfi_code"):
 
-    group = group.sort_values("date").copy()
+    group = group.sort_values(
+        "date"
+    ).copy()
 
     # Running peak NAV
-    group["running_max"] = group["nav"].cummax()
+    group["running_max"] = (
+        group["nav"].cummax()
+    )
 
     # Drawdown
     group["drawdown"] = (
-        group["nav"] / group["running_max"]
+        group["nav"]
+        / group["running_max"]
     ) - 1
 
     # Worst drawdown
-    max_drawdown = group["drawdown"].min()
+    max_drawdown = (
+        group["drawdown"].min()
+    )
 
-    worst_idx = group["drawdown"].idxmin()
+    worst_idx = (
+        group["drawdown"].idxmin()
+    )
 
     worst_date = group.loc[
         worst_idx,
@@ -92,7 +109,9 @@ dd_df = dd_df.merge(
 # --------------------------------------------------
 dd_df["drawdown_rank"] = (
     dd_df["max_drawdown_pct"]
-    .rank(ascending=False)
+    .rank(
+        ascending=False
+    )
 )
 
 # --------------------------------------------------
@@ -113,35 +132,6 @@ dd_df.to_csv(
 # --------------------------------------------------
 # Summary
 # --------------------------------------------------
-print("\nWorst 10 Drawdowns\n")
-
-print(
-    dd_df[
-        [
-            "scheme_name",
-            "max_drawdown_pct",
-            "worst_drawdown_date"
-        ]
-    ].head(10)
-)
-
-print("\nBest 10 Drawdowns\n")
-
-print(
-    dd_df[
-        [
-            "scheme_name",
-            "max_drawdown_pct",
-            "worst_drawdown_date"
-        ]
-    ].tail(10)
-)
-
-print("\nDrawdown Statistics")
-
-print(
-    dd_df["max_drawdown_pct"].describe()
-)
-
-print(f"\nSaved: {OUTPUT_FILE}")
-print(f"Rows Saved: {len(dd_df)}")
+print("Maximum Drawdown analysis completed successfully.")
+print(f"Funds analyzed : {len(dd_df)}")
+print(f"Output file    : {OUTPUT_FILE}")
